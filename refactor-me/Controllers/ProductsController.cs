@@ -3,6 +3,7 @@ using System.Net;
 using System.Web.Http;
 using refactor_me.Models;
 using refactor_me.Services;
+using System.Net.Http;
 
 namespace refactor_me.Controllers
 {
@@ -71,7 +72,12 @@ namespace refactor_me.Controllers
             var option = _productsService.GetOptionById(id);
             if (option == null)
             {
-                throw new HttpResponseException(HttpStatusCode.NotFound);
+                var response = new HttpResponseMessage(HttpStatusCode.NotFound)
+                {
+                    Content = new StringContent(string.Format("Option with Id = {0} not found.", id), System.Text.Encoding.UTF8, "text/plain"),
+                    StatusCode = HttpStatusCode.NotFound
+                };
+                throw new HttpResponseException(response);
             }
             return option;
         }
@@ -82,7 +88,12 @@ namespace refactor_me.Controllers
         {
             if (option == null)
             {
-                throw new HttpResponseException(HttpStatusCode.BadRequest);
+                var response = new HttpResponseMessage(HttpStatusCode.BadRequest)
+                {
+                    Content = new StringContent("Option cannot be null.", System.Text.Encoding.UTF8, "text/plain"),
+                    StatusCode = HttpStatusCode.BadRequest
+                };
+                throw new HttpResponseException(response);
             }
             try
             {
@@ -90,7 +101,12 @@ namespace refactor_me.Controllers
             }
             catch (Exception)
             {
-                throw new HttpResponseException(HttpStatusCode.BadRequest);
+                var response = new HttpResponseMessage(HttpStatusCode.NotFound)
+                {
+                    Content = new StringContent(string.Format("Product with Id = {0} not found.", productId), System.Text.Encoding.UTF8, "text/plain"),
+                    StatusCode = HttpStatusCode.NotFound
+                };
+                throw new HttpResponseException(response);
             }
 
         }

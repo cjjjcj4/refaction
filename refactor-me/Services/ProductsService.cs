@@ -1,66 +1,86 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using refactor_me.Dao;
 using refactor_me.Models;
+using System;
+using System.Net;
+using System.Web.Http;
 
 namespace refactor_me.Services
 {
     public class ProductsService : IProductsService
     {
-        public void CreateOption(Guid productId, ProductOption option)
-        {
-            throw new NotImplementedException();
-        }
+        private ProductDao _productDao = new ProductDao();
 
-        public void CreateProduct(Product product)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void DeleteOption(Guid id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void DeleteProduct(Guid id)
-        {
-            throw new NotImplementedException();
-        }
+        private ProductOptionDao _productOptionDao = new ProductOptionDao();
 
         public Products GetAllProducts()
         {
-            throw new NotImplementedException();
-        }
-
-        public ProductOption GetOptionById(Guid id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public ProductOptions GetOptionsByProductId(Guid productId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Product GetProductById(Guid id)
-        {
-            throw new NotImplementedException();
+            return _productDao.loadAllProducts();
         }
 
         public Products SearchProductsByName(string name)
         {
-            throw new NotImplementedException();
+            return _productDao.loadProductsByName(name);
         }
 
-        public void UpdateOption(Guid id, ProductOption option)
+        public Product GetProductById(Guid id)
         {
-            throw new NotImplementedException();
+            return _productDao.loadProductById(id);
+        }
+
+        public void CreateProduct(Product product)
+        {
+            if (product.Name == null)
+            {
+                throw new Exception("Product name is null.");
+            }
+            _productDao.addProduct(product);
         }
 
         public void UpdateProduct(Guid id, Product product)
         {
-            throw new NotImplementedException();
+            _productDao.updateProduct(id, product);
         }
+
+        public void DeleteProduct(Guid id)
+        {
+            _productOptionDao.deleteOptionsByProductId(id);
+            _productDao.deleteProduct(id);
+        }
+
+        public ProductOptions GetOptionsByProductId(Guid productId)
+        {
+            return _productOptionDao.loadOptionsByProductId(productId);
+        }
+
+        public ProductOption GetOptionById(Guid id)
+        {
+            var option = _productOptionDao.loadOptionById(id);
+            return option;
+        }
+
+        public void CreateOption(Guid productId, ProductOption option)
+        {
+            Product product = _productDao.loadProductById(productId);
+            if (product != null)
+            {
+                _productOptionDao.addProductOption(productId, option);
+            }
+            else
+            {
+                throw new Exception("Product dosen't exist.");
+            }
+
+        }
+
+        public void UpdateOption(Guid id, ProductOption option)
+        {
+            _productOptionDao.updateProductOption(id, option);
+        }
+
+        public void DeleteOption(Guid id)
+        {
+            _productOptionDao.deleteOptionById(id);
+        }
+
     }
 }
