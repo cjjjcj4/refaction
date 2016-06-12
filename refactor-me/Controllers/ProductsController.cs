@@ -3,7 +3,6 @@ using System.Net;
 using System.Web.Http;
 using refactor_me.Models;
 using refactor_me.Services;
-using System.Net.Http;
 using refactor_me.Utilities;
 
 namespace refactor_me.Controllers

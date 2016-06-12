@@ -27,10 +27,6 @@ namespace refactor_me.Services
 
         public void CreateProduct(Product product)
         {
-            if (product.Name == null)
-            {
-                throw new Exception("Product name is null.");
-            }
             _productDao.AddProduct(product);
         }
 
