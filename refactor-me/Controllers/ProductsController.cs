@@ -69,12 +69,15 @@ namespace refactor_me.Controllers
         [HttpGet]
         public ProductOption GetOption(Guid productId, Guid id)
         {
-            var option = _productsService.GetOptionById(id);
-            if (option == null)
+            var option = new ProductOption();
+            try
+            {
+                option = _productsService.GetOptionById(productId, id);
+            } catch (Exception)
             {
                 var response = new HttpResponseMessage(HttpStatusCode.NotFound)
                 {
-                    Content = new StringContent(string.Format("Option with Id = {0} not found.", id), System.Text.Encoding.UTF8, "text/plain"),
+                    Content = new StringContent(string.Format("Product with Id = {0} not found.", productId), System.Text.Encoding.UTF8, "text/plain"),
                     StatusCode = HttpStatusCode.NotFound
                 };
                 throw new HttpResponseException(response);

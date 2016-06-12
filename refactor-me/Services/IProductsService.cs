@@ -13,7 +13,7 @@ namespace refactor_me.Services
         void DeleteProduct(Guid id);
 
         ProductOptions GetOptionsByProductId(Guid productId);
-        ProductOption GetOptionById(Guid id);
+        ProductOption GetOptionById(Guid productId, Guid id);
         void CreateOption(Guid productId, ProductOption option);
         void UpdateOption(Guid id, ProductOption option);
         void DeleteOption(Guid id);

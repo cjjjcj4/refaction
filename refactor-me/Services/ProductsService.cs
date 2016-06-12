@@ -52,8 +52,13 @@ namespace refactor_me.Services
             return _productOptionDao.loadOptionsByProductId(productId);
         }
 
-        public ProductOption GetOptionById(Guid id)
+        public ProductOption GetOptionById(Guid productId, Guid id)
         {
+            var product = GetProductById(productId);
+            if (product == null)
+            {
+                throw new Exception("The product which the option belongs to dosen't exist");
+            }
             var option = _productOptionDao.loadOptionById(id);
             return option;
         }

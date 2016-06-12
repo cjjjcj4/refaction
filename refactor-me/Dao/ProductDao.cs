@@ -25,7 +25,7 @@ namespace refactor_me.Dao
             using (var conn = Helpers.NewConnection())
             {
                 string query = "SELECT * FROM product WHERE Name = @Name";
-                var result = conn.Query<Product>(query);
+                var result = conn.Query<Product>(query, new { name });
 
                 Products products = new Products(result.ToList());
                 return products;
