@@ -4,6 +4,7 @@ using System.Web.Http;
 using refactor_me.Models;
 using refactor_me.Services;
 using System.Net.Http;
+using refactor_me.Utilities;
 
 namespace refactor_me.Controllers
 {
@@ -12,6 +13,7 @@ namespace refactor_me.Controllers
     {
         private IProductsService _productsService = new ProductsService();
 
+        #region Product actions
         [Route]
         [HttpGet]
         public Products GetAll()
@@ -37,9 +39,11 @@ namespace refactor_me.Controllers
         [HttpPost]
         public void Create(Product product)
         {
-            if (product.Name == null)
+            if (product == null || product.Name == null)
             {
-                throw new HttpResponseException(HttpStatusCode.BadRequest);
+                string errMessage = product == null ? "Product cannot be null." : "Product name cannot be null.";
+                var response = HttpResponseFactory.ConstructResponse(HttpStatusCode.BadRequest, errMessage);
+                throw new HttpResponseException(response);
             }
             _productsService.CreateProduct(product);
         }
@@ -48,6 +52,12 @@ namespace refactor_me.Controllers
         [HttpPut]
         public void Update(Guid id, Product product)
         {
+            if (product == null || product.Name == null)
+            {
+                string errMessage = product == null ? "Product cannot be null." : "Product name cannot be null.";
+                var response = HttpResponseFactory.ConstructResponse(HttpStatusCode.BadRequest, errMessage);
+                throw new HttpResponseException(response);
+            }
             _productsService.UpdateProduct(id, product);
         }
 
@@ -55,9 +65,19 @@ namespace refactor_me.Controllers
         [HttpDelete]
         public void Delete(Guid id)
         {
-            _productsService.DeleteProduct(id);
-        }
+            try
+            {
+                _productsService.DeleteProduct(id);
+            } catch (Exception)
+            {
+                var response = HttpResponseFactory.ConstructResponse(HttpStatusCode.BadRequest, "Delete failed, please try again.");
+                throw new HttpResponseException(response);
+            }
 
+        }
+        #endregion
+
+        #region Product option actions
         [Route("{productId}/options")]
         [HttpGet]
         public ProductOptions GetOptions(Guid productId)
@@ -75,11 +95,7 @@ namespace refactor_me.Controllers
                 option = _productsService.GetOptionById(productId, id);
             } catch (Exception)
             {
-                var response = new HttpResponseMessage(HttpStatusCode.NotFound)
-                {
-                    Content = new StringContent(string.Format("Product with Id = {0} not found.", productId), System.Text.Encoding.UTF8, "text/plain"),
-                    StatusCode = HttpStatusCode.NotFound
-                };
+                var response = HttpResponseFactory.ConstructResponse(HttpStatusCode.BadRequest, string.Format("Product with Id = {0} not found.", productId));
                 throw new HttpResponseException(response);
             }
             return option;
@@ -91,11 +107,7 @@ namespace refactor_me.Controllers
         {
             if (option == null)
             {
-                var response = new HttpResponseMessage(HttpStatusCode.BadRequest)
-                {
-                    Content = new StringContent("Option cannot be null.", System.Text.Encoding.UTF8, "text/plain"),
-                    StatusCode = HttpStatusCode.BadRequest
-                };
+                var response = HttpResponseFactory.ConstructResponse(HttpStatusCode.BadRequest, "Option cannot be null.");
                 throw new HttpResponseException(response);
             }
             try
@@ -104,11 +116,7 @@ namespace refactor_me.Controllers
             }
             catch (Exception)
             {
-                var response = new HttpResponseMessage(HttpStatusCode.NotFound)
-                {
-                    Content = new StringContent(string.Format("Product with Id = {0} not found.", productId), System.Text.Encoding.UTF8, "text/plain"),
-                    StatusCode = HttpStatusCode.NotFound
-                };
+                var response = HttpResponseFactory.ConstructResponse(HttpStatusCode.BadRequest, string.Format("Product with Id = {0} not found.", productId));
                 throw new HttpResponseException(response);
             }
 
@@ -118,6 +126,12 @@ namespace refactor_me.Controllers
         [HttpPut]
         public void UpdateOption(Guid id, ProductOption option)
         {
+            if (option == null || option.Name == null)
+            {
+                string errMessage = option == null ? "Option cannot be null." : "Option name cannot be null.";
+                var response = HttpResponseFactory.ConstructResponse(HttpStatusCode.BadRequest, errMessage);
+                throw new HttpResponseException(response);
+            }
             _productsService.UpdateOption(id, option);
         }
 
@@ -127,5 +141,6 @@ namespace refactor_me.Controllers
         {
             _productsService.DeleteOption(id);
         }
+        #endregion
     }
 }
