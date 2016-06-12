@@ -7,7 +7,7 @@ namespace refactor_me.Dao
 {
    public class ProductOptionDao
     {
-        public ProductOptions loadOptionsByProductId(Guid productId)
+        public ProductOptions LoadOptionsByProductId(Guid productId)
         {
             using (var conn = Helpers.NewConnection())
             {
@@ -19,7 +19,7 @@ namespace refactor_me.Dao
             }
         }
 
-        public ProductOption loadOptionById(Guid id)
+        public ProductOption LoadOptionById(Guid id)
         {
             using (var conn = Helpers.NewConnection())
             {
@@ -29,7 +29,7 @@ namespace refactor_me.Dao
             }
         }
 
-        public void addProductOption(Guid productId, ProductOption option)
+        public void AddProductOption(Guid productId, ProductOption option)
         {
             using (var conn = Helpers.NewConnection())
             {
@@ -39,11 +39,11 @@ namespace refactor_me.Dao
             }
         }
 
-        public void updateProductOption(Guid id, ProductOption option)
+        public void UpdateProductOption(Guid id, ProductOption option)
         {
             using (var conn = Helpers.NewConnection())
             {
-                ProductOption originalOption = loadOptionById(id);
+                ProductOption originalOption = LoadOptionById(id);
                 if (originalOption != null)
                 {
                     string query = @"UPDATE ProductOption SET Name = @Name, Description = @Description 
@@ -58,7 +58,7 @@ namespace refactor_me.Dao
             }
         }
 
-        public void deleteOptionById(Guid id)
+        public void DeleteOptionById(Guid id)
         {
             using (var conn = Helpers.NewConnection())
             {
@@ -67,7 +67,7 @@ namespace refactor_me.Dao
             }
         }
 
-        public void deleteOptionsByProductId(Guid id)
+        public void DeleteOptionsByProductId(Guid id)
         {
             using (var conn = Helpers.NewConnection())
             {

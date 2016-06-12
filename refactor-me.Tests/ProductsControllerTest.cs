@@ -20,7 +20,6 @@ namespace refactor_me.Tests
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual(2, result.Items.Count);
         }
 
         [TestMethod]

@@ -8,7 +8,7 @@ namespace refactor_me.Dao
 {
     public class ProductDao
     {
-        public Products loadAllProducts()
+        public Products LoadAllProducts()
         {
             using (var conn = Helpers.NewConnection())
             {
@@ -20,7 +20,7 @@ namespace refactor_me.Dao
             }
         }
 
-        public Products loadProductsByName(String name)
+        public Products LoadProductsByName(String name)
         {
             using (var conn = Helpers.NewConnection())
             {
@@ -32,7 +32,7 @@ namespace refactor_me.Dao
             }
         }
 
-        public Product loadProductById(Guid id)
+        public Product LoadProductById(Guid id)
         {
             using (var conn = Helpers.NewConnection())
             {
@@ -42,7 +42,7 @@ namespace refactor_me.Dao
             }
         }
 
-        public void addProduct(Product product)
+        public void AddProduct(Product product)
         {
             using (var conn = Helpers.NewConnection())
             {
@@ -51,11 +51,11 @@ namespace refactor_me.Dao
             } 
         }
 
-        public void updateProduct(Guid id, Product product)
+        public void UpdateProduct(Guid id, Product product)
         {
             using (var conn = Helpers.NewConnection())
             {
-                Product originalProduct = loadProductById(id);
+                Product originalProduct = LoadProductById(id);
                 if(originalProduct != null)
                 {
                     string query = @"UPDATE product SET Name = @Name, Description = @Description, Price = @Price, DeliveryPrice = @DeliveryPrice 
@@ -71,12 +71,28 @@ namespace refactor_me.Dao
             }
         }
 
-        public void deleteProduct(Guid id)
+        public void DeleteProduct(Guid id)
         {
             using (var conn = Helpers.NewConnection())
             {
-                string query = "DELETE FROM Product WHERE Id = @Id";
-                conn.Execute(query, new { Id = id });
+                string deleteOptionsQuery = "DELETE FROM Product WHERE Id = @Id";
+                string deleteProductQuery = "DELETE FROM ProductOption WHERE ProductId = @Id";
+
+                conn.Open();
+                using (var transaction = conn.BeginTransaction())
+                {
+                    try
+                    {
+                        conn.Execute(deleteOptionsQuery, new { Id = id }, transaction);
+                        conn.Execute(deleteProductQuery, new { Id = id }, transaction);
+                        transaction.Commit();
+                    } catch (Exception)
+                    {
+                        transaction.Rollback();
+                    }
+                }
+
+
             }
         }
 
